@@ -62,7 +62,7 @@ var wsHook = {};
     }
 
     // Events needs to be proxied and bubbled down.
-    WSObject._addEventListener = WSObject.addEventListener
+    var _addEventListener = WSObject.addEventListener
     WSObject.addEventListener = function () {
       var eventThis = this
       // if eventName is 'message'
@@ -75,7 +75,7 @@ var wsHook = {};
           }
         })(arguments[1])
       }
-      return WSObject._addEventListener.apply(this, arguments)
+      return _addEventListener.apply(this, arguments)
     }
 
     Object.defineProperty(WSObject, 'onmessage', {
@@ -87,8 +87,9 @@ var wsHook = {};
           if (arguments[0] === null) return
           userFunc.apply(eventThis, arguments)
         }
-        WSObject._addEventListener.apply(this, ['message', onMessageHandler, false])
-      }
+        _addEventListener.apply(this, ['message', onMessageHandler, false])
+      },
+      'configurable': true
     })
 
     return WSObject
